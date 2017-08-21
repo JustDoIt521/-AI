@@ -1,11 +1,11 @@
-var chess=document.getElementById("chess");
-var context=chess.getContext('2d');
-var me=true;
-var over=false;
-var myWin=[];
-var computerWin=[];
-//----------------------------
-//win array
+var chess;
+var context;
+var me;
+var over;
+var myWin;
+var computerWin;
+var chessBoard;
+//win array origin
 var wins=[];
 for(var i=0;i<15;i++)
 {
@@ -60,63 +60,56 @@ for(var i=0;i<11;i++)
 		count++;
 	}
 }
-//------------------------------
-//cpmputer calculate
-for(var i=0;i<count;i++)
+var newGame=function()
 {
-	myWin[i]=0;
-	computerWin[i]=0;
-}
-console.log(count);
-context.strokeStyle="#BFBFBF";
-var chessBoard=[];
-for(var i=0;i<15;i++)
-{
-	chessBoard[i]=[];
-	for(var j=0;j<15;j++)
-		chessBoard[i][j]=0;
-}
 
-
-for(var i=0;i<15;i++)
-{
-	context.moveTo(15+i*30,15);
-	context.lineTo(15+i*30,435);
-	context.stroke();
-	context.moveTo(15, 15+i*30);
-	context.lineTo(435, 15+i*30);
-	context.stroke();		
-}
-
-var onestep=function(i,j,me)
- {
-	context.beginPath();
-	context.arc(15+i*30,15+j*30,13,13,0,2*Math.PI);
-	context.closePath();// context.moveTo(0, 0);
-	var gradient=context.createRadialGradient(17+i*30,13+j*30,13,17+i*30,13+j*30,0);
-	if(me)
+	var m=document.getElementById("box");
+	m.innerHTML='<canvas id="chess" width="450" height="450"></canvas>';
+	chess=document.getElementById("chess");
+	context=chess.getContext('2d');
+	me=true;
+	over=false;
+	myWin=[];
+	computerWin=[];
+	chessBoard=[];
+	//=======chessData origin
+	for(var i=0;i<15;i++)
 	{
-	    gradient.addColorStop(0,"#0A0A0A");
-	    gradient.addColorStop(1,"#636766");
+		chessBoard[i]=[];
+		for(var j=0;j<15;j++)
+			chessBoard[i][j]=0;
 	}
-	else
+	//=====chess origin
+	context.strokeStyle="#BFBFBF";
+	for(var i=0;i<15;i++)
 	{
-		gradient.addColorStop(0,"#D1D1D1");
-		gradient.addColorStop(1,"#F9F9F9");
-	} 
-	context.fillStyle=gradient;
-	context.fill();	
+		context.moveTo(15+i*30,15);
+		context.lineTo(15+i*30,435);
+		context.moveTo(15, 15+i*30);
+		context.lineTo(435, 15+i*30);
+		context.stroke();		
+	}
+	//=====Score origin
+	for(var i=0;i<count;i++)
+	{
+		myWin[i]=0;
+		computerWin[i]=0;
+	}
+	chess.onclick=function(e)
+	{
+		click(e);
+	}
 }
 
-chess.onclick=function(e)
+function click(e)
 {
 	if(over)
 	{
-		return ;
+		e
 	}
 	if(!me)
 	{
-		return ;
+		return;
 	}
 	var x=e.offsetX;
 	var y=e.offsetY;
@@ -132,8 +125,6 @@ chess.onclick=function(e)
 			{
 				myWin[k]++;  
 				computerWin[k]=6;
-				//console.log(myWin[k]);
-				//console.log(myWin[k]+"   "+computerWin[k]);
 				if(myWin[k]==5)
 				{
 					window.alert("you win,congratulations!");
@@ -148,7 +139,28 @@ chess.onclick=function(e)
 		}	
 	}
 }
-var computerAI=function()
+
+var onestep=function(i,j,me)
+{
+	context.beginPath();
+	context.arc(15+i*30,15+j*30,13,13,0,2*Math.PI);
+	var gradient=context.createRadialGradient(17+i*30,13+j*30,13,17+i*30,13+j*30,0);
+	if(me)
+	{
+	    gradient.addColorStop(0,"#0A0A0A");
+	    gradient.addColorStop(1,"#636766");
+	}
+	else
+	{
+		gradient.addColorStop(0,"#D1D1D1");
+		gradient.addColorStop(1,"#F9F9F9");
+	} 
+	context.fillStyle=gradient;
+	context.fill();	
+	context.closePath();
+}
+
+function computerAI()
 {
 	var myScore=[];
 	var computerScore=[];
@@ -174,31 +186,19 @@ var computerAI=function()
 				{
 					if(wins[i][j][k])
 					{
-						if(myWin[k]==1)
+						switch(myWin[k])
 						{
-							myScore[i][j]+=200;
-						}else if(myWin[k]==2)
-						{
-							myScore[i][j]+=400;
-						}else if(myWin[k]==3)
-						{
-							myScore[i][j]+=2000;
-						}else if(myWin[k]==4)
-						{
-							myScore[i][j]+=10000;
+							case 1:myScore[i][j]+=200;break;
+							case 2:myScore[i][j]+=400;break;
+							case 3:myScore[i][j]+=2000;break;
+							case 4:myScore[i][j]+=10000;break;
 						}
-						if(computerWin[k]==1)
+						switch(computerWin[k])
 						{
-							computerScore[i][j]+=220;
-						}else if(computerWin[k]==2)
-						{
-							computerScore[i][j]+=420;
-						}else if(computerWin[k]==3)
-						{
-							computerScore[i][j]+=2100;
-						}else if(computerWin[k]==4)
-						{
-							computerScore[i][j]+=20000;
+							case 1:myScore[i][j]+=220;break;
+							case 2:myScore[i][j]+=420;break;
+							case 3:myScore[i][j]+=2100;break;
+							case 4:myScore[i][j]+=20000;break;
 						}
 					}
 					if(myScore[i][j]>max)
@@ -239,8 +239,6 @@ var computerAI=function()
 		{
 			myWin[k]=6;  
 			computerWin[k]++;
-			//console.log(myWin[k]);
-			//console.log(myWin[k]+"   "+computerWin[k]);
 			if(computerWin[k]==5)
 			{
 				window.alert("computer win,congratulations!");
@@ -253,7 +251,13 @@ var computerAI=function()
 		me=!me;
 	}
 }
-// context.lineTo(450, 450);
-// context.stroke();
-// onestep(0,0,true);
-// onestep(2,3,false)
+
+window.onload=function()
+{
+	newGame();
+}
+
+function Repain()
+{
+	newGame();
+}
